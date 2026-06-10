@@ -2,6 +2,7 @@ package com.example.device_service.service;
 
 import com.example.device_service.dto.DeviceDto;
 import com.example.device_service.entity.Device;
+import com.example.device_service.exception.DeviceNotFoundException;
 import com.example.device_service.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ public class DeviceService {
 
     public DeviceDto getDeviceById(Long id) {
         Device device = deviceRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Device not found with id: " + id));
+                .orElseThrow(() -> new DeviceNotFoundException("Device not found with id: " + id));
         return maptoDto(device);
     }
 
@@ -31,7 +32,7 @@ public class DeviceService {
 
     public DeviceDto updateDevice(Long id, DeviceDto input) {
         Device before = deviceRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Device not found with id: " + id));
+                .orElseThrow(() -> new DeviceNotFoundException("Device not found with id: " + id));
 
         before.setName(input.getName());
         before.setType(input.getType());
@@ -44,7 +45,7 @@ public class DeviceService {
 
     public void deleteDevice(Long id) {
         if (!deviceRepository.existsById(id)){
-            throw new IllegalArgumentException("Device not found with id: " + id);
+            throw new DeviceNotFoundException("Device not found with id: " + id);
         }
         deviceRepository.deleteById(id);
     }
