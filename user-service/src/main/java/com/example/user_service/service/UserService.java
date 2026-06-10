@@ -2,6 +2,7 @@ package com.example.user_service.service;
 
 import com.example.user_service.dto.UserDto;
 import com.example.user_service.entity.User;
+import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    public UserDto getUserById(Long id) {
+        return userRepository.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+    }
 
     public UserDto createUser(UserDto input){
         final User createdUser = User.builder()
@@ -29,15 +36,9 @@ public class UserService {
         return toDto(saved);
     }
 
-    public UserDto getUserById(Long id) {
-        return userRepository.findById(id)
-                .map(this::toDto)
-                .orElse(null);
-    }
-
     public void updateUser(Long id, UserDto userDto){
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
@@ -51,7 +52,7 @@ public class UserService {
 
     public void deleteUser(Long id){
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
         userRepository.delete(user);
     }
