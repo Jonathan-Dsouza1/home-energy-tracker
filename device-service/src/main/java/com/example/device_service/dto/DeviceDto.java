@@ -6,14 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class DeviceDto {
-    private Long id;
-    private String name;
-    private DeviceType type;
-    private String location;
-    private Long userId;
-}
+public record DeviceDto (
+        Long id,
+        String name,
+        DeviceType type,
+        String location,
+        Long userId
+) {}

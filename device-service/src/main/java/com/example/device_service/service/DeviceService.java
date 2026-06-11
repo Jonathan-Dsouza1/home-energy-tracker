@@ -16,31 +16,31 @@ public class DeviceService {
     public DeviceDto getDeviceById(Long id) {
         Device device = deviceRepository.findById(id)
                 .orElseThrow(() -> new DeviceNotFoundException("Device not found with id: " + id));
-        return maptoDto(device);
+        return mapToDto(device);
     }
 
     public DeviceDto createDevice(DeviceDto deviceDto) {
         Device device = new Device();
-        device.setName(deviceDto.getName());
-        device.setType(deviceDto.getType());
-        device.setLocation(deviceDto.getLocation());
-        device.setUserId(deviceDto.getUserId());
+        device.setName(deviceDto.name());
+        device.setType(deviceDto.type());
+        device.setLocation(deviceDto.location());
+        device.setUserId(deviceDto.userId());
 
         Device savedDevice = deviceRepository.save(device);
-        return maptoDto(savedDevice);
+        return mapToDto(savedDevice);
     }
 
     public DeviceDto updateDevice(Long id, DeviceDto input) {
         Device before = deviceRepository.findById(id)
                 .orElseThrow(() -> new DeviceNotFoundException("Device not found with id: " + id));
 
-        before.setName(input.getName());
-        before.setType(input.getType());
-        before.setLocation(input.getLocation());
-        before.setUserId(input.getUserId());
+        before.setName(input.name());
+        before.setType(input.type());
+        before.setLocation(input.location());
+        before.setUserId(input.userId());
 
         Device after = deviceRepository.save(before);
-        return maptoDto(after);
+        return mapToDto(after);
     }
 
     public void deleteDevice(Long id) {
@@ -50,13 +50,13 @@ public class DeviceService {
         deviceRepository.deleteById(id);
     }
 
-    private DeviceDto maptoDto(Device device){
-        DeviceDto dto = new DeviceDto();
-        dto.setId(device.getId());
-        dto.setName(device.getName());
-        dto.setType(device.getType());
-        dto.setLocation(device.getLocation());
-        dto.setUserId(device.getUserId());
-        return dto;
+    private DeviceDto mapToDto(Device device){
+        return new DeviceDto(
+                device.getId(),
+                device.getName(),
+                device.getType(),
+                device.getLocation(),
+                device.getUserId()
+        );
     }
 }

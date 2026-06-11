@@ -23,12 +23,12 @@ public class UserService {
 
     public UserDto createUser(UserDto input){
         final User createdUser = User.builder()
-                .name(input.getName())
-                .surname(input.getSurname())
-                .email(input.getEmail())
-                .address(input.getAddress())
-                .alerting(input.isAlerting())
-                .energyAlertingThreshold(input.getEnergyAlertingThreshold())
+                .name(input.name())
+                .surname(input.surname())
+                .email(input.email())
+                .address(input.address())
+                .alerting(input.alerting())
+                .energyAlertingThreshold(input.energyAlertingThreshold())
                 .build();
 
         final User saved = userRepository.save(createdUser);
@@ -40,12 +40,12 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
-        user.setName(userDto.getName());
-        user.setSurname(userDto.getSurname());
-        user.setEmail(userDto.getEmail());
-        user.setAddress(userDto.getAddress());
-        user.setAlerting(userDto.isAlerting());
-        user.setEnergyAlertingThreshold(userDto.getEnergyAlertingThreshold());
+        user.setName(userDto.name());
+        user.setSurname(userDto.surname());
+        user.setEmail(userDto.email());
+        user.setAddress(userDto.address());
+        user.setAlerting(userDto.alerting());
+        user.setEnergyAlertingThreshold(userDto.energyAlertingThreshold());
 
         userRepository.save(user);
     }
@@ -58,14 +58,14 @@ public class UserService {
     }
 
     private UserDto toDto(User user){
-        return UserDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .surname(user.getSurname())
-                .email(user.getEmail())
-                .address(user.getAddress())
-                .alerting(user.isAlerting())
-                .energyAlertingThreshold(user.getEnergyAlertingThreshold())
-                .build();
+        return new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getEmail(),
+                user.getAddress(),
+                user.isAlerting(),
+                user.getEnergyAlertingThreshold()
+        );
     }
 }
