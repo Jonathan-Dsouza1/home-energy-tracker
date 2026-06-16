@@ -30,6 +30,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class UsageService {
 
+    private static final String ENERGY_USAGE_MEASUREMENT = "energy-usage";
+
     private InfluxDBClient influxDBClient;
     private DeviceClient deviceClient;
     private UserClient userClient;
@@ -54,7 +56,7 @@ public class UsageService {
 
     @KafkaListener(topics = "energy-usage", groupId = "usage-service")
     public void energyUsageEvent(EnergyUsageEvent energyUsageEvent) {
-        log.info("Received energy usage event: {}", energyUsageEvent);
+//        log.info("Received energy usage event: {}", energyUsageEvent);
         Point point = Point.measurement("energy-usage")
                 .addTag("deviceId", String.valueOf(energyUsageEvent.deviceId()))
                 .addField("energyConsumed", energyUsageEvent.energyConsumed())
@@ -86,11 +88,11 @@ public class UsageService {
         String fluxQuery = String.format("""
                 from(bucket: "%s")
                     |> range(start: time(v: "%s"), stop: time(v: "%s"))
-                    |> filter(fn: (r) => r["_measurement"] == "energy_usage")
+                    |> filter(fn: (r) => r["_measurement"] == "%s")
                     |> filter(fn: (r) => r["_field"] == "energyConsumed")
                     |> group(columns: ["deviceId"])
                     |> sum(column: "_value")
-                """, influxBucket, start, stop);
+                """, influxBucket, start, stop, "energy-usage");
 
         QueryApi queryApi = influxDBClient.getQueryApi();
         List<FluxTable> tables = queryApi.query(fluxQuery, influxOrg);
@@ -112,14 +114,16 @@ public class UsageService {
 
     private void addUserIds(final List<DeviceEnergy> deviceEnergies) {
         for (DeviceEnergy deviceEnergy : deviceEnergies) {
-            final DeviceDto deviceResponse = deviceClient.getDeviceById(deviceEnergy.getDeviceId());
-
-            if (deviceResponse == null || deviceResponse.id() == null) {
-                log.warn("Device not found for ID: {}", deviceEnergy.getDeviceId());
-                continue;
+            try {
+                final DeviceDto deviceResponse = deviceClient.getDeviceById(deviceEnergy.getDeviceId());
+                if (deviceResponse == null || deviceResponse.id() == null) {
+                    log.warn("Device not found for ID: {}", deviceEnergy.getDeviceId());
+                    continue;
+                }
+                deviceEnergy.setUserId(deviceResponse.userId());
+            } catch (Exception e) {
+                log.warn("Failed to fetch device for ID: {}", deviceEnergy.getDeviceId());
             }
-
-            deviceEnergy.setUserId(deviceResponse.userId());
         }
     }
 
