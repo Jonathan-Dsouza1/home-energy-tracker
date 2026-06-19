@@ -9,13 +9,15 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
-@RequiredArgsConstructor
 public class UsageClient {
 
     private final RestTemplate restTemplate;
-
-    @Value("${usage.service,url}")
     private final String baseUrl;
+
+    public UsageClient(@Value("${usage.service,url}") String baseUrl) {
+        this.restTemplate = new RestTemplate();
+        this.baseUrl = baseUrl;
+    }
 
     public UsageDto getXDaysUsageForUser(Long userId, int days) {
         String url = UriComponentsBuilder
