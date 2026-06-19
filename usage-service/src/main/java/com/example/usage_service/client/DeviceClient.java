@@ -11,13 +11,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class DeviceClient {
 
     private final RestTemplate restTemplate;
-
-    @Value("${device.service.url}")
     private final String baseUrl;
+
+    public DeviceClient(@Value("${device.service.url}") String baseUrl) {
+        this.restTemplate = new RestTemplate();
+        this.baseUrl = baseUrl;
+    }
 
     public DeviceDto getDeviceById(Long deviceId) {
         String url = UriComponentsBuilder
