@@ -1,5 +1,8 @@
 package com.example.usage_service.dto;
 
+import lombok.Builder;
+
+@Builder
 public record DeviceDto(
         Long id,
         String name,
