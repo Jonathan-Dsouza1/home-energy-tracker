@@ -14,7 +14,7 @@ public class UsageClient {
     private final RestTemplate restTemplate;
     private final String baseUrl;
 
-    public UsageClient(@Value("${usage.service,url}") String baseUrl) {
+    public UsageClient(@Value("${usage.service.url}") String baseUrl) {
         this.restTemplate = new RestTemplate();
         this.baseUrl = baseUrl;
     }
