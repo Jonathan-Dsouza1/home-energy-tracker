@@ -33,3 +33,5 @@ build/
 .vscode/
 
 influxdb_data/
+
+volume-data/
