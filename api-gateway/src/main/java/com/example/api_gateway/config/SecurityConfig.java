@@ -16,7 +16,7 @@ public class SecurityConfig {
     private String jwkSetUri;
 
     @Value("${security.excluded.urls}")
-    private String excludedUrls;
+    private String[] excludedUrls;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
